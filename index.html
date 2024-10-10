@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语音识别示例</title>
+</head>
+<body>
+    <h1>语音识别示例</h1>
+    <button id="start-button">开始识别</button>
+    <div id="output"></div>
+
+    <script>
+        const startButton = document.getElementById('start-button');
+        const outputDiv = document.getElementById('output');
+
+        // 检查浏览器是否支持语音识别
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+            recognition.onstart = () => {
+                console.log('语音识别已启动');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                outputDiv.innerText = `识别结果: ${transcript}`;
+            };
+
+            recognition.onerror = (event) => {
+                console.error('识别错误:', event.error);
+            };
+
+            startButton.onclick = async () => {
+                try {
+                    // 请求用户的麦克风权限
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                    recognition.start(); // 开始语音识别
+                } catch (error) {
+                    console.error('获取麦克风失败:', error);
+                }
+            };
+        } else {
+            alert('抱歉，您的浏览器不支持语音识别。');
+        }
+    </script>
+</body>
+</html>
